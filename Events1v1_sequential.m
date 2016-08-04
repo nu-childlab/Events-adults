@@ -1,4 +1,4 @@
-function [] = jumpExpv6()
+function [] = Events1v1_sequential()
 Screen('Preference', 'SkipSyncTests', 0);
 close all;
 sca

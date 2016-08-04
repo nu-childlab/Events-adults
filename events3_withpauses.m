@@ -1,4 +1,4 @@
-function [] = events3_withpauses()
+function [] = Events3_withpauses()
 Screen('Preference', 'SkipSyncTests', 0);
 close all;
 sca

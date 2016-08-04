@@ -1,4 +1,4 @@
-function [] = events1v2()
+function [] = Events1v2()
 Screen('Preference', 'SkipSyncTests', 0);
 close all;
 sca
