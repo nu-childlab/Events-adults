@@ -1,12 +1,12 @@
 # Events Adults
 
-# How to Run
+## How to Run
 Put the experiment script you want to run in a folder, along with the two images and the appropriate parameters file(s). Go to the Matlab command line, use cd to navigate to the directory with the script, and run it.
 
-#Experiments
+##Experiments
 The experiment files are Matlab scripts using Psychtoolbox version 3.0.12. For more information, see [the github page](https://github.com/Psychtoolbox-3/Psychtoolbox-3).
 
-##Events 1v1
+###Events 1v1
 The initial experiment of the Events study. There experiment structure consists of 2 blocks, each of which contains 4 sub-blocks, for a total of 8 blocks. Each block contains 30 trials, so the total experiment contains 240 trials.
 
 The premise of the experiment is that a red star and a blue heart will each jump on the screen, with the number of jumps, the height of the jumps, and the time it takes to complete all the jumps being parameters specified in a csv file of parameters. They also spent a short time stopped between jumps, marked by an interjump interval parameter in the script, but not the parameters files.
@@ -15,19 +15,19 @@ This experiment contains two large blocks. One is sequential jumping, where the 
 
 The shapes' jumps were calculated using a sine curve, which slowed the shape at the peak of the jump to give the impression of realistic jumping.
 
-##Events 1v2
+###Events 1v2
 This experiment is nearly identical to the first. The parameters used were changed to improve the ratios between the various parameters. Additionally, the simultaneous and sequential conditions were combined into the same script, and the initial condition is specified at the start of the experiment along wiht subject number.
 
-##Events 2
+###Events 2
 This experiment is similar to Events1v2. The parameters and movement are the same, but the background and question have changed. Instead of the blue sky and green grass from the first experiments, Events 2 splits the screen into a pink left half and a blue right half, and asks to compare whether the star has MOVED higher/longer/more times/more than the heart.
 
-##Events 3
+###Events 3
 This experiment is similar to Events 2, but the sine curve that had contributed a sense of "jumping" is removed. There is one version with pauses between each up-and-down movement cycle, and one version without pauses.
 
-#Image Files
+##Image Files
 The image files (“blue heart.png” and “red star.png”) are used for all experiments. They should be in the same folder as the experiment script when you run the experiment.
 
-#Parameters Files
+##Parameters Files
 * eventsparameters.csv
   * Used for Events1v1, and for no other events experiment.
 * eventsparametersv2.csv
