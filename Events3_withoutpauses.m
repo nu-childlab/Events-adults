@@ -1,4 +1,4 @@
-function [] = events2v2()
+function [] = Events3_withoutpauses()
 Screen('Preference', 'SkipSyncTests', 0);
 close all;
 sca
@@ -49,7 +49,7 @@ interjump = .1;
 screens = Screen('Screens');
 screenNumber = max(screens);
 %Sets the display screen to the most external screen.
-%PsychDebugWindowConfiguration(-1, .5) %opacity
+PsychDebugWindowConfiguration(-1, .5) %opacity
 [window, windowRect] = PsychImaging('OpenWindow', screenNumber, black);
 %opens a window in the most external screen and colors it)
 Screen('BlendFunction', window, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -103,16 +103,16 @@ time = 0;
 %%%DATA SAVING
 
 initprint = 0;
-if ~(exist('~/Desktop/Data/EVENTS/EVENTS2v2/EVENTS2v2data.csv', 'file') == 2)
+if ~(exist('~/Desktop/Data/EVENTS/EVENTS3v2/EVENTS3v2data.csv', 'file') == 2)
     initprint = 1;
 end
-dataFile = fopen('~/Desktop/Data/EVENTS/EVENTS2v2/EVENTS2v2data.csv', 'a');
-subjFile = fopen(['~/Desktop/Data/EVENTS/EVENTS2v2/' subj '.csv'],'a');
+dataFile = fopen('~/Desktop/Data/EVENTS/EVENTS3v2/EVENTS3v2data.csv', 'a');
+subjFile = fopen(['~/Desktop/Data/EVENTS/EVENTS3v2/' subj '.csv'],'a');
 if initprint
     fprintf(dataFile, ['subj,time,A Number,A Height,A Jump Duration,A Total Duration,'...
         'B Number,B Height,B Jump Duration,B Total Duration,response,sentence,condition \n']);
 end
-fprintf(subjFile, ['subj,time,A Number,A Height,A Jump Duration,A Total Duration,'...
+fprintf(subjFile, ['subj,response time,A Number,A Height,A Jump Duration,A Total Duration,'...
     'B Number,B Height,B Jump Duration,B Total Duration,response,sentence,condition \n']);
 
 lineFormat = '%s,%6.2f,%d,%d,%6.2f,%6.2f,%d,%d,%6.2f,%6.2f,%s,%s,%s \n';
@@ -179,10 +179,17 @@ for c = 1:2
                 for j = 1:starJumps;
                     t1 = GetSecs();
                     m = 1;
-                    while m <= numel(starcount)
-                        x = starcount(m);
-                        ypos = starHeight * sin(x);
-                        starYpos = ground - ypos;
+                    posUp = linspace(ground,starHeight,round(starframes/2));
+                    posDown = linspace (starHeight,ground,round(starframes/2));
+                    ypos = [posUp posDown];
+%                     starc = numel(starcount);
+%                     stary = numel(ypos);
+                    while m <= numel(ypos)
+                        %x = starcount(m);
+                        %ypos = starHeight * sin(x);
+                        starYpos = ypos(m);
+                        
+                        
                         starXpos = starpos;
                         heartYpos = ground;
                         heartXpos = heartpos;
@@ -209,7 +216,8 @@ for c = 1:2
                     t2 = GetSecs();
                     time = t2 - t1;
                     
-                    WaitSecs(interjump);
+                    
+                    %WaitSecs(interjump);
                 end
                 
                 
@@ -218,12 +226,17 @@ for c = 1:2
                 for j = 1:heartJumps;
                     t1 = GetSecs();
                     m = 1;
-                    while m <= numel(heartcount)
-                        x = heartcount(m);
-                        ypos = heartHeight * sin(x);
+                    posUp = linspace(ground,heartHeight,round(heartframes/2));
+                    posDown = linspace (heartHeight,ground,round(heartframes/2));
+                    ypos = [posUp posDown];
+%                     heartc = numel(heartcount);
+%                     hearty = numel(ypos);
+                    while m <= numel(ypos)
+                        %x = heartcount(m);
+                        %ypos = heartHeight * sin(x);
                         starYpos = ground;
                         starXpos = starpos;
-                        heartYpos = ground - ypos;
+                        heartYpos = ypos(m);
                         heartXpos = heartpos;
                         
                         
@@ -249,7 +262,7 @@ for c = 1:2
                     t2 = GetSecs();
                     time = t2 - t1;
                     
-                    WaitSecs(interjump);
+                    %WaitSecs(interjump);
                 end
                 
                 Screen('FillRect', window, black);
@@ -293,63 +306,86 @@ for c = 1:2
                 
                 %%%STAR ANIMATION
                 Screen('FillRect', window, skyBlue);
-                sj = 1;
-                sm = 1;
-                sw = 5;
-                hj = 1;
-                hm = 1;
-                hw = 5;
                 
+                starposUp = linspace(ground,starHeight,round(starframes/2));
+                starposDown = linspace (starHeight-1,ground-1,round(starframes/2));
+                ypos = [starposUp starposDown];
+                starposList = repmat(ypos, 1, starJumps);
                 
-                while sj <= starJumps || hj <= heartJumps
-                    
-                    %%%STAR POSITION
-                    if sj > starJumps || sw < 5
-                        %If star is done jumping or in wait cycle
+                heartposUp = linspace(ground,heartHeight,round(heartframes/2));
+                heartposDown = linspace (heartHeight,ground,round(heartframes/2));
+                ypos = [heartposUp heartposDown];
+                heartposList = repmat(ypos, 1, heartJumps);
+                
+                starXpos = starpos;
+                heartXpos = heartpos;
+
+                count = 1;
+                t1 = GetSecs();
+                while count <= numel(starposList) || count <= numel(heartposList)
+                    if count > numel(starposList)
                         starYpos = ground;
-                        starXpos = starpos;
-                        if sw < 5
-                            sw = sw + 1;
-                            sm = 1;
-                        end
                     else
-                        %If not waiting
-                        if sm >= numel(starcount)
-                            %If done with one jump cycle
-                            %update counts
-                            sw = 1;
-                            sj = sj + 1;
-                        end
-                        %otherwise, calculate position
-                        x = starcount(sm);
-                        ypos = starHeight * sin(x);
-                        starYpos = ground - ypos;
-                        starXpos = starpos;
+                        starYpos = starposList(count);
                     end
-                    
-                    %%%HEART POSITION
-                    if hj > heartJumps || hw < 5
-                        %If heart is done jumping or in wait cycle
+                    if count > numel(heartposList)
                         heartYpos = ground;
-                        heartXpos = heartpos;
-                        if hw < 5
-                            hw = hw + 1;
-                            hm = 1;
-                        end
                     else
-                        %If not waiting
-                        if hm >= numel(heartcount)
-                            %If done with one jump cycle
-                            %update counts
-                            hw = 1;
-                            hj = hj + 1;
-                        end
-                        %otherwise, calculate position
-                        x = heartcount(hm);
-                        ypos = heartHeight * sin(x);
-                        heartYpos = ground - ypos;
-                        heartXpos = heartpos;
+                        heartYpos = heartposList(count);
                     end
+                
+                
+                
+                
+%                 while sj <= starJumps || hj <= heartJumps
+%                     
+%                     %%%STAR POSITION
+%                     if sj > starJumps || sw < 5
+%                         %If star is done jumping or in wait cycle
+%                         starYpos = ground;
+%                         starXpos = starpos;
+%                         if sw < 5
+%                             sw = sw + 1;
+%                             sm = 1;
+%                         end
+%                     else
+%                         %If not waiting
+%                         if sm >= numel(starcount)
+%                             %If done with one jump cycle
+%                             %update counts
+%                             sw = 1;
+%                             sj = sj + 1;
+%                         end
+%                         %otherwise, calculate position
+%                         x = starcount(sm);
+%                         ypos = starHeight * sin(x);
+%                         starYpos = ground - ypos;
+%                         starXpos = starpos;
+%                     end
+%                     
+%                     %%%HEART POSITION
+%                     if hj > heartJumps || hw < 5
+%                         %If heart is done jumping or in wait cycle
+%                         heartYpos = ground;
+%                         heartXpos = heartpos;
+%                         if hw < 5
+%                             hw = hw + 1;
+%                             hm = 1;
+%                         end
+%                     else
+%                         %If not waiting
+%                         if hm >= numel(heartcount)
+%                             %If done with one jump cycle
+%                             %update counts
+%                             hw = 1;
+%                             hj = hj + 1;
+%                         end
+%                         %otherwise, calculate position
+%                         x = heartcount(hm);
+%                         ypos = heartHeight * sin(x);
+%                         heartYpos = ground - ypos;
+%                         heartXpos = heartpos;
+%                     end
                     
                     
                     stardestRect = [starXpos - 128/2, ... %left
@@ -368,11 +404,16 @@ for c = 1:2
                     
                     % Increment the time
                     time = time + ifi;
-                    sm = sm + 1;
-                    hm = hm + 1;
+%                     sm = sm + 1;
+%                     hm = hm + 1;
+                    count = count + 1;
                 end
                 
                 Screen('FillRect', window, black);
+                t2 = GetSecs();
+                time = t2 - t1;
+%                 disp(heartTime)
+%                 disp(starTime)
                 [response, responsetime] = getResponse(window, sentence, textsize, screenYpixels);
                 
                 fprintf(dataFile, lineFormat, subj, responsetime*1000, starJumps, starHeight, starTime,...
