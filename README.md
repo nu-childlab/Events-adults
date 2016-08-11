@@ -1,5 +1,8 @@
 # Events Adults
 A collection of experiments based on examining comparisons of dynamic events.
+
+This experiment also uses Psychtoolbox version 3.0.12. For more information, see [the github page](https://github.com/Psychtoolbox-3/Psychtoolbox-3).
+
 ## How to Run
 Put the experiment script you want to run in a folder, along with the two images and the appropriate parameters file(s). Go to the Matlab command line, use cd to navigate to the directory with the script, and run it.
 
